@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "build:demo": "VITE_DEMO=1 vite build --outDir dist-demo --base ./ && python3 scripts/build-demo.py dist-demo/snaked-demo.html"
   },
   "dependencies": {
     "react": "^19.1.0",

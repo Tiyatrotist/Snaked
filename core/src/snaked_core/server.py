@@ -28,7 +28,7 @@ def _make_runner() -> ToolRunner:
         from .computer.local import LocalComputer
 
         return ToolRunner(LocalComputer())
-    except Exception:  # no display or the desktop extra is missing
+    except (Exception, SystemExit):  # no display, the desktop extra is missing, or a backend exits on import
         return ToolRunner(None)
 
 

@@ -5,8 +5,10 @@ use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
 
-use serde::Serialize;
-use tauri::{Manager, RunEvent};
+use std::time::Duration;
+
+use serde::{Deserialize, Serialize};
+use tauri::{Manager, RunEvent, WebviewWindow};
 
 const CORE_PORT: u16 = 8765;
 
@@ -17,6 +19,64 @@ struct CoreInfo {
 }
 
 struct CoreProcess(Mutex<Option<Child>>);
+
+/// Parts of the overlay the pet occupies, in CSS pixels. Everywhere else, clicks pass
+/// through to the apps underneath.
+#[derive(Clone, Copy, Deserialize)]
+struct Rect {
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+}
+
+struct HitRegions(Mutex<Vec<Rect>>);
+
+#[tauri::command]
+fn set_hit_regions(rects: Vec<Rect>, regions: tauri::State<HitRegions>) {
+    *regions.0.lock().unwrap() = rects;
+}
+
+/// Cover the primary monitor's work area (above the taskbar or dock) with the overlay.
+fn place_overlay(win: &WebviewWindow) -> tauri::Result<()> {
+    if let Some(monitor) = win.primary_monitor()? {
+        let area = monitor.work_area();
+        win.set_position(area.position)?;
+        win.set_size(area.size)?;
+    }
+    // Show first: on Linux the native window only exists once shown, and changing
+    // cursor handling on an unrealized window panics inside tao.
+    win.show()?;
+    win.set_ignore_cursor_events(true)
+}
+
+/// A transparent window can't hit-test per pixel, so poll the cursor and only accept
+/// mouse input while it is over the pet or its bubble.
+fn watch_cursor(win: WebviewWindow) {
+    std::thread::spawn(move || {
+        let mut ignoring = true;
+        loop {
+            std::thread::sleep(Duration::from_millis(25));
+            let (Ok(cursor), Ok(origin), Ok(scale)) =
+                (win.cursor_position(), win.outer_position(), win.scale_factor())
+            else {
+                continue;
+            };
+            let x = (cursor.x - origin.x as f64) / scale;
+            let y = (cursor.y - origin.y as f64) / scale;
+            let inside = win
+                .state::<HitRegions>()
+                .0
+                .lock()
+                .unwrap()
+                .iter()
+                .any(|r| x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
+            if inside == ignoring && win.set_ignore_cursor_events(!inside).is_ok() {
+                ignoring = !inside;
+            }
+        }
+    });
+}
 
 /// Random token for the local WebSocket, so other programs on the machine can't drive the agent.
 fn random_token() -> String {
@@ -72,7 +132,14 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(CoreInfo { port: CORE_PORT, token })
         .manage(CoreProcess(Mutex::new(child)))
-        .invoke_handler(tauri::generate_handler![core_info])
+        .manage(HitRegions(Mutex::new(Vec::new())))
+        .invoke_handler(tauri::generate_handler![core_info, set_hit_regions])
+        .setup(|app| {
+            let win = app.get_webview_window("main").expect("main window");
+            place_overlay(&win)?;
+            watch_cursor(win);
+            Ok(())
+        })
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

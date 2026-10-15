@@ -1,7 +1,7 @@
 """Cross-platform computer control interface.
 
 Each OS gets a driver implementing `Computer`. v0.1 ships one driver built on
-pyautogui + mss; native drivers (ScreenCaptureKit/CGEvent, SendInput/UIA,
+pynput + mss; native drivers (ScreenCaptureKit/CGEvent, SendInput/UIA,
 PipeWire/libei/AT-SPI) replace it piece by piece.
 """
 
@@ -13,14 +13,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Screenshot:
-    png: bytes
+    """An image sent to the model. It is downscaled for speed, so `screen_width`
+    (in the units mouse coordinates use) tells how to map image pixels back."""
+
+    data: bytes
     width: int
     height: int
+    screen_width: int
+    mime: str = "image/jpeg"
 
 
 class Computer(ABC):
     @abstractmethod
-    def screenshot(self) -> Screenshot: ...
+    def screenshot(self, max_width: int = 1280) -> Screenshot: ...
 
     @abstractmethod
     def mouse_move(self, x: int, y: int) -> None: ...

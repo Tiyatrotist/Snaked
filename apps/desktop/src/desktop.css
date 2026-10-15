@@ -1,0 +1,38 @@
+/* A pretend computer screen for the web demo. */
+.desk {
+  position: relative; width: 100%; aspect-ratio: 1000 / 620; overflow: hidden; border-radius: 14px;
+  background:
+    radial-gradient(120% 90% at 85% 10%, var(--wall-a), transparent 60%),
+    radial-gradient(90% 80% at 10% 100%, var(--wall-b), transparent 65%),
+    var(--wall-c);
+  border: 1px solid var(--line); container-type: inline-size;
+}
+.desk__menubar {
+  position: absolute; inset: 0 0 auto 0; height: 3.2cqw; min-height: 18px; display: flex; align-items: center; gap: 2cqw;
+  padding: 0 1.6cqw; font-size: max(10px, 1.3cqw); background: var(--glass); backdrop-filter: blur(10px); color: var(--text);
+}
+.desk__clock { margin-left: auto; font-variant-numeric: tabular-nums; }
+.desk__icon { position: absolute; transform: translate(-50%, -30%); display: flex; flex-direction: column; align-items: center; gap: 0.4cqw; }
+.desk__icon small { font-size: max(9px, 1.15cqw); color: var(--wall-text); text-shadow: 0 1px 2px var(--wall-shadow); }
+.folder { width: 5.2cqw; height: 4cqw; border-radius: 0.6cqw; background: linear-gradient(#7cc4ff, #3b9cf0); position: relative; }
+.folder::before { content: ""; position: absolute; left: 0; top: -0.7cqw; width: 45%; height: 1cqw; border-radius: 0.5cqw 0.5cqw 0 0; background: #7cc4ff; }
+.desk__dock {
+  position: absolute; left: 50%; bottom: 0.8cqw; transform: translateX(-50%); width: 32cqw;
+  border-radius: 1.6cqw; background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--line);
+}
+.desk__app { position: absolute; top: 50%; width: 4.2cqw; height: 4.2cqw; border-radius: 1cqw; transform: translate(calc(-50% - 34cqw), -50%); }
+.desk__win {
+  position: absolute; width: 34cqw; background: var(--panel); color: var(--text); border-radius: 1.2cqw; overflow: hidden;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.35); border: 1px solid var(--line); animation: pop 0.2s ease-out; font-size: max(11px, 1.35cqw);
+}
+.desk__winbar { display: flex; align-items: center; gap: 0.6cqw; padding: 0.8cqw 1cqw; border-bottom: 1px solid var(--line); }
+.desk__winbar i { width: 1cqw; height: 1cqw; min-width: 7px; min-height: 7px; border-radius: 50%; background: var(--line); }
+.desk__winbar span { margin-left: 0.8cqw; font-weight: 600; }
+.desk__winbar button { margin-left: auto; border: 0; padding: 0 0.6cqw; background: transparent; font-size: 1.1em; }
+.desk__winbody { padding: 1.2cqw 1.4cqw; display: flex; flex-direction: column; gap: 0.5cqw; font-variant-numeric: tabular-nums; }
+
+:root { --wall-a: #b7f0cf; --wall-b: #9fd4ff; --wall-c: #dfeee6; --glass: rgba(255, 255, 255, 0.55); --wall-text: #12301f; --wall-shadow: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --wall-a: #14532d; --wall-b: #0c3a5c; --wall-c: #0b1511; --glass: rgba(20, 28, 24, 0.6); --wall-text: #f2fbf6; --wall-shadow: rgba(0, 0, 0, 0.5); }
+}
+:root[data-theme="dark"] { --wall-a: #14532d; --wall-b: #0c3a5c; --wall-c: #0b1511; --glass: rgba(20, 28, 24, 0.6); --wall-text: #f2fbf6; --wall-shadow: rgba(0, 0, 0, 0.5); }

@@ -2,7 +2,10 @@ import { invoke } from "@tauri-apps/api/core";
 
 export type Provider = { id: string; label: string; kind: "api_key" | "local" | "subscription" };
 
-export type AgentEvent =
+type Timed = { t_ms?: number };
+
+export type AgentEvent = Timed &
+  (
   | { type: "ready"; screen_control: boolean }
   | { type: "providers"; items: Provider[] }
   | { type: "thinking"; step: number }
@@ -14,11 +17,15 @@ export type AgentEvent =
       risk: "low" | "medium" | "high";
       status: "awaiting_approval" | "running" | "ok" | "failed" | "rejected" | "denied";
       error?: string;
+      at?: [number, number];
     }
   | { type: "approval"; id: string; action: { name: string; args: Record<string, unknown> } }
   | { type: "done"; summary: string }
   | { type: "stopped" }
-  | { type: "error"; text: string };
+  | { type: "error"; text: string }
+  | { type: "fastpath" }
+  | { type: "latency"; model_ms: number; over_budget: boolean }
+  );
 
 type CoreInfo = { port: number; token: string };
 

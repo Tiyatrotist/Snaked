@@ -46,6 +46,10 @@ TOOLS: list[dict] = [
 class ToolRunner:
     def __init__(self, computer: Computer | None):
         self.computer = computer
+        self._scale = 1.0  # screenshot pixels -> screen coordinates
+
+    def screen_point(self, args: dict[str, Any]) -> tuple[int, int]:
+        return round(args["x"] * self._scale), round(args["y"] * self._scale)
 
     def _need_computer(self) -> Computer:
         if self.computer is None:
@@ -56,9 +60,14 @@ class ToolRunner:
         """Returns a result dict; `image` holds a base64 PNG for screenshots."""
         if name == "screenshot":
             shot = self._need_computer().screenshot()
-            return {"text": f"{shot.width}x{shot.height}", "image": base64.b64encode(shot.png).decode()}
+            self._scale = shot.screen_width / shot.width
+            return {
+                "text": f"{shot.width}x{shot.height}; give click coordinates in this image's pixels",
+                "image": base64.b64encode(shot.data).decode(),
+                "mime": shot.mime,
+            }
         if name in {"click", "double_click"}:
-            self._need_computer().click(args["x"], args["y"], clicks=2 if name == "double_click" else 1)
+            self._need_computer().click(*self.screen_point(args), clicks=2 if name == "double_click" else 1)
             return {"text": "ok"}
         if name == "scroll":
             self._need_computer().scroll(args["amount"])

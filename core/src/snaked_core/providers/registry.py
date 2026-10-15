@@ -9,12 +9,14 @@ from .litellm_provider import LiteLLMProvider
 from .ollama import discover_local
 from .subscription import ClaudeCodeProvider, CodexProvider
 
-# provider name -> (env var for the key, default model in LiteLLM naming)
+# provider name -> (env var for the key, default model in LiteLLM naming).
+# Defaults are each vendor's fast tier, because Snaked aims to act within 3 seconds;
+# users can pick a larger model per connection.
 API_PROVIDERS: dict[str, tuple[str, str]] = {
-    "openai": ("OPENAI_API_KEY", "openai/gpt-5"),
-    "anthropic": ("ANTHROPIC_API_KEY", "anthropic/claude-sonnet-5-5"),
-    "gemini": ("GEMINI_API_KEY", "gemini/gemini-2.5-pro"),
-    "mistral": ("MISTRAL_API_KEY", "mistral/mistral-large-latest"),
+    "openai": ("OPENAI_API_KEY", "openai/gpt-5-mini"),
+    "anthropic": ("ANTHROPIC_API_KEY", "anthropic/claude-haiku-5-5"),
+    "gemini": ("GEMINI_API_KEY", "gemini/gemini-2.5-flash"),
+    "mistral": ("MISTRAL_API_KEY", "mistral/mistral-small-latest"),
     "groq": ("GROQ_API_KEY", "groq/llama-3.3-70b-versatile"),
     "deepseek": ("DEEPSEEK_API_KEY", "deepseek/deepseek-chat"),
     "xai": ("XAI_API_KEY", "xai/grok-4"),

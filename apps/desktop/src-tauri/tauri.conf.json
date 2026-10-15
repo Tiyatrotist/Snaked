@@ -14,15 +14,23 @@
       {
         "label": "main",
         "title": "Snaked",
-        "width": 440,
-        "height": 720,
-        "minWidth": 380,
-        "minHeight": 520
+        "width": 800,
+        "height": 600,
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "resizable": false,
+        "visible": false,
+        "focus": false,
+        "visibleOnAllWorkspaces": true
       }
     ],
     "security": {
       "csp": "default-src 'self'; connect-src 'self' ws://127.0.0.1:*; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
-    }
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
