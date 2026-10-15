@@ -8,3 +8,4 @@ __pycache__/
 .ruff_cache/
 apps/desktop/src-tauri/gen/schemas/
 .DS_Store
+dist-demo/

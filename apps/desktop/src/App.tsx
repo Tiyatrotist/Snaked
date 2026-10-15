@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { AgentEvent, CoreClient, Provider } from "./core";
+import { AgentEvent, Core, CoreClient, Provider } from "./core";
+import { DemoCore } from "./demo";
 import { Mood, Snake } from "./Snake";
 import "./App.css";
 
@@ -75,14 +76,13 @@ export default function App() {
   const [showConnect, setShowConnect] = useState(false);
   const feed = useRef<HTMLDivElement>(null);
 
-  const client = useMemo(
-    () =>
-      new CoreClient(
-        (e: AgentEvent) => handle(e),
-        (up) => setOnline(up),
-      ),
-    [],
-  );
+  const client = useMemo<Core>(() => {
+    const Impl = import.meta.env.VITE_DEMO ? DemoCore : CoreClient;
+    return new Impl(
+      (e: AgentEvent) => handle(e),
+      (up) => setOnline(up),
+    );
+  }, []);
 
   function push(item: Item) {
     setItems((xs) => [...xs, item]);
@@ -203,7 +203,7 @@ export default function App() {
             <Snake mood="idle" size={110} />
             <p>Bilgisayarında ne yapmamı istersin?</p>
             <div className="chips">
-              {["İndirilenler klasörünü türlere göre düzenle", "Masaüstündeki ekran görüntülerini bir klasöre taşı", "Bu bilgisayarın disk durumunu özetle"].map((s) => (
+              {["İndirilenler klasörünü türlere göre düzenle", "Masaüstündeki ekran görüntülerini bir klasöre taşı", "Bu bilgisayarın disk durumunu özetle", "İndirilenlerdeki 30 günden eski dosyaları sil"].map((s) => (
                 <button key={s} className="chip" onClick={() => setInput(s)}>
                   {s}
                 </button>

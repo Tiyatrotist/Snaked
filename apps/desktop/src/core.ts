@@ -28,7 +28,12 @@ async function coreInfo(): Promise<CoreInfo> {
   return { port: 8765, token: import.meta.env.VITE_SNAKED_TOKEN ?? "dev" };
 }
 
-export class CoreClient {
+export interface Core {
+  connect(): Promise<void>;
+  send(msg: Record<string, unknown>): void;
+}
+
+export class CoreClient implements Core {
   private ws?: WebSocket;
   constructor(private onEvent: (e: AgentEvent) => void, private onStatus: (up: boolean) => void) {}
 
