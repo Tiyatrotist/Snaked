@@ -104,7 +104,7 @@ MVP dışında kalanlar: erişilebilirlik ağacı, tarayıcı DOM kontrolü, san
 
 | Aşama | İçerik |
 |---|---|
-| 0. Hazırlık | Repo, lisans (Apache-2.0 önerisi), monorepo iskeleti, CI ile üç platformda derleme |
+| 0. Hazırlık | Repo, lisans (MIT), monorepo iskeleti, CI ile üç platformda derleme |
 | 1. MVP (v0.1) | Yukarıdaki kapsam |
 | 2. Doğruluk (v0.2) | Erişilebilirlik ağacı sürücüleri, Playwright ile tarayıcı kontrolü, grounding modeli ayrımı, ekran üstü hedef gösterimi |
 | 3. Güven (v0.3) | Sandbox modu, gelişmiş izinler, eylem günlüğü görüntüleyici, geri alma (dosya işlemlerinde) |
@@ -127,7 +127,7 @@ snaked/
 
 ## 9. Verilen kararlar ve kalan tek soru
 
-Seçilenler: Tauri 2 + React arayüz, Python agent çekirdeği, MCP araç protokolü, LiteLLM tabanlı çoklu sağlayıcı katmanı, Apache-2.0 lisans.
+Seçilenler: Tauri 2 + React arayüz, Python agent çekirdeği, MCP araç protokolü, LiteLLM tabanlı çoklu sağlayıcı katmanı, MIT lisans.
 
 Kalan soru: GitHub'da `Tiyatrotist/snaked` adıyla repo açıp iskeleti kurmaya başlayayım mı? (Onay gelmeden repo açılmayacak.)
 
